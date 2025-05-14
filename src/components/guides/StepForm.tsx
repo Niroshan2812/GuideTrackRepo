@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import type { Step } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { SaveIcon, XIcon } from 'lucide-react';
+import { SaveIcon, XIcon, AlertTriangleIcon, MonitorPlayIcon, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { set } from 'date-fns';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 interface StepFormProps {
   step?: Step;
@@ -147,16 +148,29 @@ export default function StepForm({ step, onSubmit, onCancel, existingStepCount }
       setIsCapturing(false);
     }
   };
-  
+
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!description) {
-      alert("Step description is required."); // Basic validation
+      toast({ variant: "destructive", title: "Missing Field", description: "Step description is required." });
       return;
     }
     // For placeholder images, if URL is empty, assign a default one
     const finalImageUrl = imageUrl || `https://placehold.co/600x400.png?text=Step+${step ? step.stepNumber : existingStepCount + 1}`;
+   let currentSubmitDataAiHint = dataAIHint;
+
+   if(!imageUrl && finalImageUrl.startsWith('https://placehold.co')){
+      currentSubmitDataAiHint = 'step illustration';
+   }else if(step && step.imageUrl === finalImageUrl && step['data-ai-hint'] && !dataAIHint && !finalImageUrl.startsWith('data')){
+    // do this to avoid overwriting the hint
+      currentSubmitDataAiHint = step['data-ai-hint'];
+   } else if(!dataAIHint && imageUrl && !imageUrl.startsWith('data')){
+    currentSubmitDataAiHint = 'custom image';
+   }else if(!dataAIHint && !imageUrl){
+    currentSubmitDataAiHint = 'step illustration';
+  }
+   
     onSubmit({ description, hint, imageUrl: finalImageUrl });
   };
 
@@ -188,18 +202,40 @@ export default function StepForm({ step, onSubmit, onCancel, existingStepCount }
               placeholder="Add an optional hint"
             />
           </div>
-          <div>
-            <Label htmlFor="step-image-url">Image URL (Optional)</Label>
-            <Input
-              id="step-image-url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://placehold.co/600x400.png or your image URL"
-            />
+         <div>
+            <Label htmlFor="step-image-url">Image (URL or Capture)</Label>
+            <div className="flex items-start sm:items-center gap-2 flex-col sm:flex-row">
+                <Input
+                id="step-image-url"
+                value={imageUrl}
+                onChange={handleUserURLchange}
+                placeholder="https://... or capture screen"
+                disabled={isCapturing}
+                className="flex-grow"
+                />
+                <Button
+                type="button"
+                variant="outline"
+                onClick={handleScreenCapture}
+                disabled={isCapturing}
+                title="Capture Screen or Window"
+                className="w-full sm:w-auto"
+                >
+                {isCapturing ? <Loader2 className="h-4 w-4 animate-spin" /> : <MonitorPlayIcon className="h-4 w-4" />}
+                <span className="ml-2">Capture</span>
+                </Button>
+            </div>
+            {captureError && (
+                <Alert variant="destructive" className="mt-2">
+                <AlertTriangleIcon className="h-4 w-4" />
+                <AlertTitle>Capture Error</AlertTitle>
+                <AlertDescription>{captureError}</AlertDescription>
+                </Alert>
+            )}
             {imageUrl && (
-                <div className="mt-2">
+                <div className="mt-2 p-2 border rounded-md inline-block bg-muted">
                     { /* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={imageUrl} alt="Preview" className="rounded-md max-h-40 object-contain border" />
+                    <img src={imageUrl} alt="Preview" className="rounded-md max-h-48 object-contain" />
                 </div>
             )}
           </div>
