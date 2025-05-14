@@ -41,9 +41,9 @@ const initialGuides: Guide[] = [
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     steps: [
-      { id: 'step1-1', stepNumber: 1, description: 'Preheat oven to 350°F (175°C). Grease and flour a 9x9 inch pan.', imageUrl: 'https://placehold.co/600x400.png?text=Oven+Preheat', data-ai-hint: 'oven kitchen' },
-      { id: 'step1-2', stepNumber: 2, description: 'In a medium bowl, cream together the sugar and butter.', imageUrl: 'https://placehold.co/600x400.png?text=Mixing+Ingredients', data-ai-hint: 'mixing bowl' },
-      { id: 'step1-3', stepNumber: 3, description: 'Beat in the eggs, one at a time, then stir in the vanilla.', hint: 'Ensure eggs are fully incorporated.', imageUrl: 'https://placehold.co/600x400.png?text=Adding+Eggs', data-ai-hint: 'eggs cooking' },
+      { id: 'step1-1', stepNumber: 1, description: 'Preheat oven to 350°F (175°C). Grease and flour a 9x9 inch pan.', imageUrl: 'https://placehold.co/600x400.png?text=Oven+Preheat', 'data-ai-hint': 'oven kitchen' },
+      { id: 'step1-2', stepNumber: 2, description: 'In a medium bowl, cream together the sugar and butter.', imageUrl: 'https://placehold.co/600x400.png?text=Mixing+Ingredients', 'data-ai-hint': 'mixing bowl' },
+      { id: 'step1-3', stepNumber: 3, description: 'Beat in the eggs, one at a time, then stir in the vanilla.', hint: 'Ensure eggs are fully incorporated.', imageUrl: 'https://placehold.co/600x400.png?text=Adding+Eggs', 'data-ai-hint': 'eggs cooking' },
     ],
   },
 ];
@@ -115,6 +115,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
         if (guide.id === guideId) {
           const newStepNumber = guide.steps.length > 0 ? Math.max(...guide.steps.map(s => s.stepNumber)) + 1 : 1;
           createdStep = { ...newStep, stepNumber: newStepNumber };
+          // Ensure 'data-ai-hint' is carried over if present in stepData
+          if (stepData['data-ai-hint']) {
+            createdStep['data-ai-hint'] = stepData['data-ai-hint'];
+          }
           return {
             ...guide,
             steps: [...guide.steps, createdStep],

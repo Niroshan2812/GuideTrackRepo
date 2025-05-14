@@ -11,6 +11,7 @@ export interface Step {
   hint?: string;
   imageUrl?: string; // URL to placeholder or uploaded image
   audioUrl?: string; // Placeholder for audio file name/URL
+  'data-ai-hint'?: string; // For image search keywords
 }
 
 export interface Guide {

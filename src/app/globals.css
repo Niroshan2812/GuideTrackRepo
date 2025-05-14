@@ -98,8 +98,9 @@ body {
 
 /* Custom FAB styles */
 .fab {
-  @apply fixed bottom-20 right-6 md:bottom-8 md:right-8 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center text-fab-accent-foreground;
+  @apply fixed bottom-20 right-6 md:bottom-8 md:right-8 z-50 h-14 w-14 rounded-full shadow-lg flex items-center justify-center;
   background-color: hsl(var(--fab-accent));
+  color: hsl(var(--fab-accent-foreground));
 }
 .fab:hover {
   opacity: 0.9;
