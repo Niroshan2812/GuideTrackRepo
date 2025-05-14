@@ -66,7 +66,7 @@ export default function CategoriesPage() {
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
-            <CategoryForm 
+            <CategoryForm
               onSubmit={handleAddCategory}
               onCancel={() => setShowAddCategoryDialog(false)}
             />
@@ -100,20 +100,26 @@ export default function CategoriesPage() {
                   <span className="text-md font-medium">{category.name}</span>
                   <div className="flex space-x-2">
                     <Dialog open={isEditingCategory?.id === category.id} onOpenChange={(isOpen) => !isOpen && setIsEditingCategory(null)}>
-                       <DialogTrigger asChild>
-                        <Button variant="outline" size="icon" onClick={() => setIsEditingCategory(category)} aria-label="Edit category">
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setIsEditingCategory(category)}
+                          aria-label="Edit category"
+                        >
                           <FilePenIcon className="h-4 w-4" />
                         </Button>
                       </DialogTrigger>
-                      {isEditingCategory?.id === category.id && (
-                         <DialogContent className="sm:max-w-md">
+
+                      <DialogContent className="sm:max-w-md">
+                        {isEditingCategory?.id === category.id && (
                           <CategoryForm
                             category={isEditingCategory}
                             onSubmit={handleUpdateCategory}
                             onCancel={() => setIsEditingCategory(null)}
                           />
-                        </DialogContent>
-                      )}
+                        )}
+                      </DialogContent>
                     </Dialog>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
